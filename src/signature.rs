@@ -1,22 +1,12 @@
 use crate::Error;
-use std::convert::TryFrom;
 
 /// An Ed25519 signature.
 #[derive(Copy, Clone, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[allow(non_snake_case)]
 pub struct Signature {
-    pub(crate) R_bytes: [u8; 32],
-    pub(crate) s_bytes: [u8; 32],
-}
-
-impl core::fmt::Debug for Signature {
-    fn fmt(&self, fmt: &mut core::fmt::Formatter) -> core::fmt::Result {
-        fmt.debug_struct("Signature")
-            .field("R_bytes", &hex::encode(&self.R_bytes))
-            .field("s_bytes", &hex::encode(&self.s_bytes))
-            .finish()
-    }
+    pub R_bytes: [u8; 32],
+    pub s_bytes: [u8; 32],
 }
 
 impl From<[u8; 64]> for Signature {
@@ -30,9 +20,7 @@ impl From<[u8; 64]> for Signature {
     }
 }
 
-impl TryFrom<&[u8]> for Signature {
-    type Error = Error;
-
+impl Signature {
     fn try_from(slice: &[u8]) -> Result<Signature, Error> {
         if slice.len() == 64 {
             let mut bytes = [0u8; 64];
